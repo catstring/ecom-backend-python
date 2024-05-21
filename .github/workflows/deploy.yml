@@ -1,0 +1,58 @@
+name: Deploy Django API to AWS EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run migrations
+      run: python manage.py migrate
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Install dependencies on EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no ec2-user@54.253.52.106 << 'EOF'
+          sudo yum update -y
+          sudo yum install -y git nginx python3-pip
+          sudo pip3 install virtualenv
+          sudo systemctl start nginx
+          sudo systemctl enable nginx
+          sudo mkdir -p /var/www/django-api
+          sudo chown -R ec2-user:ec2-user /var/www/django-api
+          sudo chmod -R 775 /var/www/django-api
+        EOF
+
+    - name: Deploy to EC2
+      run: |
+        rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" * ec2-user@54.253.52.106:/var/www/django-api/
+        ssh -o StrictHostKeyChecking=no ec2-user@54.253.52.106 << 'EOF'
+          cd /var/www/django-api
+          virtualenv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          python manage.py migrate
+          sudo chown -R nginx:nginx /var/www/django-api
+          sudo systemctl restart nginx
+        EOF
