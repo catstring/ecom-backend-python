@@ -49,10 +49,10 @@ jobs:
         rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" * ec2-user@54.253.52.106:/var/www/ecom-back-django/
         ssh -o StrictHostKeyChecking=no ec2-user@54.253.52.106 << 'EOF'
           cd /var/www/ecom-back-django
-          virtualenv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-          python manage.py migrate
-          sudo chown -R nginx:nginx /var/www/ecom-back-django
+          # virtualenv venv
+          # source venv/bin/activate
+          # pip install -r requirements.txt
+          # python manage.py migrate
+          # sudo chown -R nginx:nginx /var/www/ecom-back-django
           sudo systemctl restart nginx
         EOF
