@@ -24,9 +24,9 @@ urlpatterns = [
     path('ecom-api/admin/', admin.site.urls),
     # path('api/', include('base.urls')),
     path('ecom-api/', include('base.urls.test_urls')),
-    path('api/products/', include('base.urls.product_urls')),
-    path('api/users/', include('base.urls.user_urls')),
-    path('api/orders/', include('base.urls.order_urls')),
+    path('ecom-api/api/products/', include('base.urls.product_urls')),
+    path('ecom-api/api/users/', include('base.urls.user_urls')),
+    path('ecom-api/api/orders/', include('base.urls.order_urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
