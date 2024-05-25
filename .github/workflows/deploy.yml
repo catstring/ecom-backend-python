@@ -34,14 +34,14 @@ jobs:
     - name: Install dependencies on EC2
       run: |
         ssh -o StrictHostKeyChecking=no ec2-user@54.253.52.106 << 'EOF'
-          sudo yum update -y
-          sudo yum install -y git nginx python3-pip
-          sudo pip3 install virtualenv
-          sudo systemctl start nginx
-          sudo systemctl enable nginx
-          sudo mkdir -p /var/www/ecom-back-django
-          sudo chown -R ec2-user:ec2-user /var/www/ecom-back-django
-          sudo chmod -R 775 /var/www/ecom-back-django
+          # sudo yum update -y
+          # sudo yum install -y git nginx python3-pip
+          # sudo pip3 install virtualenv
+          # sudo systemctl start nginx
+          # sudo systemctl enable nginx
+          # sudo mkdir -p /var/www/ecom-back-django
+          # sudo chown -R ec2-user:ec2-user /var/www/ecom-back-django
+          # sudo chmod -R 775 /var/www/ecom-back-django
         EOF
 
     - name: Deploy to EC2
