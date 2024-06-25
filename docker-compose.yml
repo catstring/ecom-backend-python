@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.5
+    restart: always
+    environment:
+      MYSQL_DATABASE: ecom_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 85jflwhg
+      MYSQL_ROOT_PASSWORD: 85jflwhg
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:8000 backend.wsgi:application
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      DATABASE_NAME: ecom_db
+      DATABASE_USER: root
+      DATABASE_PASSWORD: 85jflwhg
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - "8002:80"
+    depends_on:
+      - web
+
+volumes:
+  db_data:
+  static_volume:
+  media_volume:
